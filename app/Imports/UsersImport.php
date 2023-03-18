@@ -17,10 +17,6 @@ class UsersImport implements ToModel, WithBatchInserts, WithChunkReading ,WithHe
     public function model(array $row)
 
     {
-
-
-        // $currentRowNumber = $this->getRowNumber();
-
         return new Upload([
             'title'=>$row['title'],
             'firstname'=>$row['firstname'],

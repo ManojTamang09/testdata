@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UploadController;
+use App\Models\Upload;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,11 @@ use App\Http\Controllers\UploadController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    $fetch=Upload::paginate(70);
+    // dd($fetch);
+
+    return view('welcome',compact('fetch'));
 });
 
 Route::resource('upload','App\Http\Controllers\UploadController');

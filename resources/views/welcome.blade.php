@@ -308,9 +308,9 @@ h1 {
             </div>
         </form>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
-    <script>
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script> --}}
+    {{-- <script>
         $(function () {
             $(document).ready(function () {
                 $('#fileUploadForm').ajaxForm({
@@ -329,6 +329,78 @@ h1 {
                 });
             });
         });
-    </script>
+    </script> --}}
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css" rel="stylesheet">
+ <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <div class="container">
+
+        <div class="card-body table-responsive">
+            <span style="float: right;">   {!! $fetch->appends(request()->query())->links() !!} </span>
+        <table id="example" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Sl no</th>
+                    <th> title</th>
+                    <th> firstname</th>
+                   <th> lastname</th>
+                     <th> lastname</th>
+                     <th> gender</th>
+                    <th> specialty</th>
+                   <th> practice</th>
+                     <th> phone</th>
+                    <th> fax</th>
+                    <th> email</th>
+                    <th> address</th>
+                    <th> city</th>
+                    <th> county</th>
+                    <th> state</th>
+                    <th> zip</th>
+                    <th> latitude</th>
+                     <th> longitude</th>
+
+                    <th> siccode</th>
+                    <th> website</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($fetch as $key => $f)
+                <tr>
+                    <td>{{$key+1}}</td>
+                    <td>{{$f->title}}</td>
+                    <td>{{$f->firstname}}</td>
+                    <td>{{$f->lastname}}</td>
+                    <td>{{$f->lastname}}</td>
+                    <td>{{$f->gender}}</td>
+                    <td>{{$f->specialty}}</td>
+                    <td>{{$f->practice}}</td>
+                    <td>{{$f->phone}}</td>
+                    <td>{{$f->fax}}</td>
+                    <td>{{$f->email}}</td>
+                    <td>{{$f->address}}</td>
+                    <td>{{$f->city}}</td>
+                    <td>{{$f->county}}</td>
+                    <td>{{$f->state}}</td>
+                    <td>{{$f->zip}}</td>
+                    <td>{{$f->latitude}}</td>
+                    <td>{{$f->longitude}}</td>
+                    <td>{{$f->siccode}}</td>
+                    <td>{{$f->website}}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        {{-- <span style="float: right;">   {!! $fetch->appends(request()->query())->links() !!} </span> --}}
+
+        </div>
+    </div>
+    <script>
+//         $(document).ready(function () {
+//     $('#example').DataTable();
+// });
+        </script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
 </body>
 </html>
