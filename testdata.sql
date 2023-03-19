@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2023 at 11:46 AM
--- Server version: 10.1.38-MariaDB
--- PHP Version: 7.3.3
+-- Generation Time: Mar 19, 2023 at 07:32 AM
+-- Server version: 10.4.22-MariaDB
+-- PHP Version: 7.3.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -35,7 +34,7 @@ CREATE TABLE `failed_jobs` (
   `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -46,25 +45,40 @@ CREATE TABLE `failed_jobs` (
 
 CREATE TABLE `jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `attempts` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
+  `queue` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `attempts` tinyint(3) UNSIGNED DEFAULT 0,
   `reserved_at` int(10) UNSIGNED DEFAULT NULL,
-  `available_at` int(10) UNSIGNED NOT NULL,
-  `created_at` int(10) UNSIGNED NOT NULL,
-  `excel_file` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `available_at` int(10) UNSIGNED DEFAULT NULL,
+  `created_at` int(10) UNSIGNED DEFAULT NULL,
+  `excel_file` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_batches`
+--
+
+CREATE TABLE `job_batches` (
+  `id` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_jobs` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `pending_jobs` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `failed_jobs` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `failed_job_ids` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cancelled_at` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `finished_at` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `jobs`
+-- Dumping data for table `job_batches`
 --
 
-INSERT INTO `jobs` (`id`, `queue`, `payload`, `attempts`, `reserved_at`, `available_at`, `created_at`, `excel_file`) VALUES
-(1, 'excel-processing', '{\"job\":null,\"connection\":null,\"queue\":null,\"chainConnection\":null,\"chainQueue\":null,\"chainCatchCallbacks\":null,\"delay\":null,\"afterCommit\":null,\"middleware\":[],\"chained\":[]}', 0, NULL, 1679134226, 1679134226, 'Book1.csv'),
-(2, 'excel-processing', '{}', 0, NULL, 1679135357, 1679135357, 'Book1.csv'),
-(3, 'excel-processing', '{}', 0, NULL, 1679135473, 1679135473, 'Book1.csv'),
-(4, 'excel-processing', '{}', 0, NULL, 1679135537, 1679135537, 'Physicians.csv'),
-(5, 'excel-processing', '{}', 0, NULL, 1679136075, 1679136075, 'Book1.csv');
+INSERT INTO `job_batches` (`id`, `name`, `total_jobs`, `pending_jobs`, `failed_jobs`, `failed_job_ids`, `options`, `created_at`, `cancelled_at`, `finished_at`) VALUES
+('98b7e71d-418d-4160-a554-f308cd04dc6f', '', 0, 0, 0, '[]', 'a:0:{}', '1679156238', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -114,7 +128,7 @@ CREATE TABLE `personal_access_tokens` (
   `tokenable_id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text COLLATE utf8mb4_unicode_ci,
+  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -186,6 +200,12 @@ ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `job_batches`
+--
+ALTER TABLE `job_batches`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
@@ -232,7 +252,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=634;
 
 --
 -- AUTO_INCREMENT for table `migrations`

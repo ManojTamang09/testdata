@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Imports\UsersImport;
 use App\Jobs\ProcessExcelJob;
+use App\Jobs\SalesCsvProcess;
 use App\Models\Upload;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Bus;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UploadController extends Controller
@@ -21,7 +23,7 @@ class UploadController extends Controller
         $fetch=Upload::paginate(70);
         // dd($fetch);
 
-        return view('view',compact('fetch'));
+        return view('view1',compact('fetch'));
     }
 
     /**
@@ -45,51 +47,78 @@ class UploadController extends Controller
         $this->validate(request(), [
             'file'=>'required',
         ]);
-        // $name = time().'.'.request()->file->getClientOriginalExtension();
-        // Excel::import(new UsersImport,request()->file);
-        // $filePath=$request->all();
-        // $data=$request->all();
-        // if ($request->hasFile('file')) {
-        //     //  Let's do everything here
-        //     if ($request->file('file')->isValid()) {
-        //         //
-        //         $fileName = "excelupload-"  . request()->file('file');
-        //         $ext = $request->file('file')->getClientOriginalExtension();
+        // // $name = time().'.'.request()->file->getClientOriginalExtension();
+        // // Excel::import(new UsersImport,request()->file);
+        // // $filePath=$request->all();
+        // // $data=$request->all();
+        // // if ($request->hasFile('file')) {
+        // //     //  Let's do everything here
+        // //     if ($request->file('file')->isValid()) {
+        // //         //
+        // //         $fileName = "excelupload-"  . request()->file('file');
+        // //         $ext = $request->file('file')->getClientOriginalExtension();
 
-        //         // $request->file->storeAs('excelupload', $fileName);
-        //         $filetotal=$fileName.$ext;
-        //         $fileName=$request->file->move(public_path('excelupload'),$fileName.$ext);
+        // //         // $request->file->storeAs('excelupload', $fileName);
+        // //         $filetotal=$fileName.$ext;
+        // //         $fileName=$request->file->move(public_path('excelupload'),$fileName.$ext);
 
-        //          $data['file']=$fileName;
+        // //          $data['file']=$fileName;
 
-        //     }
-        // }
+        // //     }
+        // // }
 
-                    $file = $request->file('file');
-                $filename = $file->getClientOriginalName();
-                $file->move(public_path('excelupload'), $filename);
-                $filePath = '/excelupload/' . $filename;
-
-
-
-        // dd($filePath);'
-        // ProcessExcelJob::dispatch($filePath)->onQueue('excel-processing');
-        $job=dispatch(new ProcessExcelJob($filePath));
+        //             $file = $request->file('file');
+        //         $filename = $file->getClientOriginalName();
+        //         $file->move(public_path('excelupload'), $filename);
+        //         $filePath = '/excelupload/' . $filename;
 
 
-        // ProcessExcelJob::dispatch($filePath);
-        // $job = new ProcessExcelJob($filePath);
 
-        // Dispatch the job to the queue
-        DB::table('jobs')->insert([
-            'queue' => 'excel-processing',
-            'payload' => json_encode($job),
-            'attempts' => 0,
-            'reserved_at' => null,
-            'available_at' => now()->timestamp,
-            'created_at' => now()->timestamp,
-            'excel_file' => basename($filePath), // Set the name of the Excel file being processed
-        ]);
+        // // dd($filePath);'
+        // // ProcessExcelJob::dispatch($filePath)->onQueue('excel-processing');
+        // $job=dispatch(new ProcessExcelJob($filePath));
+
+
+        // // ProcessExcelJob::dispatch($filePath);
+        // // $job = new ProcessExcelJob($filePath);
+
+        // // Dispatch the job to the queue
+        // DB::table('jobs')->insert([
+        //     'queue' => 'excel-processing',
+        //     'payload' => json_encode($job),
+        //     'attempts' => 0,
+        //     'reserved_at' => null,
+        //     'available_at' => now()->timestamp,
+        //     'created_at' => now()->timestamp,
+        //     'excel_file' => basename($filePath), // Set the name of the Excel file being processed
+        // ]);
+
+        if (request()->has('file')) {
+            $data   =   file(request()->file);
+            // Chunking file
+
+            $chunks = array_chunk($data, 1000);
+
+            // dd($chunks);
+            $header = [];
+            $batch  = Bus::batch([])->dispatch();
+
+            foreach ($chunks as $key => $chunk) {
+                $data = array_map('str_getcsv', $chunk);
+
+                if ($key === 0) {
+                    $header = $data[0];
+                    unset($data[0]);
+                }
+
+                // $batch->add(new SalesCsvProcess($data, $header));
+                SalesCsvProcess::dispatch($data, $header)->onQueue('csv_processing');
+
+            }
+
+            // return $batch;
+        }
+
         return back()->with('message','Data imported successfully');
     }
 

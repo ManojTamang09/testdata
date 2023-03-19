@@ -87,22 +87,27 @@ class ProcessExcelJob implements ShouldQueue
 
     public function handle()
     {
-        dd("inside job");
-        $chunkSize = 1000; // Set the chunk size to 1000 records per chunk
+        // dd("inside job");
+        $chunkSize = 100; // Set the chunk size to 1000 records per chunk
 
         // $collection = collect(IOFactory::load($this->filePath)->getActiveSheet()->toArray());
 
         // $chunks = $collection->chunk($chunkSize);
 
         $filePath = public_path($this->filePath);
-        // dd($filePath);
+
         $collection = new Collection(IOFactory::load($filePath)->getActiveSheet()->toArray());
+        dd($collection);
         $chunks = $collection->chunk($chunkSize);
 
 
+        // dd($chunks);
         $chunks->each(function ($chunk) {
+
             DB::transaction(function () use ($chunk) {
+
                 foreach ($chunk as $row) {
+                    // dd($chunk,$row[2]);
                     // Create a new model instance for each row and save it to the database
                     Upload::create([
                         'title' => $row[0],

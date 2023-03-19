@@ -288,6 +288,15 @@ h1 {
         {{Session::get('message')}}
         </div>
     @endif
+    @if ($errors->any())
+              <div class="alert alert-danger">
+              <ul>
+                  @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
+              </div>
+              @endif
     <div class="container mt-5" style="max-width: 500px">
 
         <div class="alert alert-warning mb-4 text-center">
